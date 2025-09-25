@@ -3,6 +3,7 @@ Orders (write-only model)
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
+import json
 from models.product import Product
 from models.order_item import OrderItem
 from models.order import Order
@@ -64,7 +65,6 @@ def add_order(user_id: int, items: list):
 
         session.commit()
 
-        # TODO: ajouter la commande à Redis
         add_order_to_redis(order_id, user_id, total_amount, items)
 
         return order_id
@@ -85,7 +85,6 @@ def delete_order(order_id: int):
             session.delete(order)
             session.commit()
 
-            # TODO: supprimer la commande à Redis
             delete_order_from_redis(order_id)
             return 1  
         else:
@@ -105,13 +104,15 @@ def add_order_to_redis(order_id, user_id, total_amount, items):
         "id": order_id,
         "user_id": user_id,
         "total_amount": total_amount,
-        "items": str(items)
+        "items": json.dumps(items)
     }
     r.hset(order_key, mapping=order_data)
 
 def delete_order_from_redis(order_id):
     """Delete order from Redis"""
-    pass
+    r = get_redis_conn()
+    order_key = f"order:{order_id}"
+    r.delete(order_key)
 
 def sync_all_orders_to_redis():
     """ Sync orders from MySQL to Redis """

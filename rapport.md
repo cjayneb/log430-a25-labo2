@@ -26,7 +26,10 @@ _template_view.py_\
 _order_controller.py_\
 ![alt text](image-2.png)
 
-Dans notre cas, nous voulons seulement exécuter `sync_all_orders_to_redis`, donc j'ai ajouté un appel à cette fonction lors du démarrage de l'application dans `store_manager.py` et j'ai enlever les appels de méthodes mentionnés plus haut.
+Dans notre cas, nous voulons seulement exécuter `sync_all_orders_to_redis`, donc j'ai ajouté un appel à cette fonction lors du démarrage de l'application dans `store_manager.py` et j'ai enlever les appels de méthodes mentionnés plus haut. De plus, j'ai implémenté la fonction `add_order_to_redis` qui est appelé lors de la synchronisation :
+
+_write_order.py_\
+![alt text](image-8.png)
 
 ### Question 2
 
@@ -38,11 +41,29 @@ _read_order.py_\
 ![alt text](image-4.png)
 
 _order.py_\
-![alt text](image-3.png)
+![alt text](image-9.png)
 
 ### Question 3
 
-Votre réponse ici (ajoutez des illustrations si nécessaire : captures d’écran, extraits de code, etc.)
+> Quelles méthodes avez-vous utilisées pour ajouter des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+
+Juste après le `session.commit()` dans la méthode `add_order`, j'ai simplement appelé la fonction `add_order_to_redis` que j'avais déjà implémenté dans le cadre de l'étape **1. Population initiale de Redis au démarrage**. Dans cette méthode, j'utilise la méthode `hset` pour ajouter une commande à Redis, c'est une bonne façon d'insérer des données structurées.
+
+_write_order.py_\
+![alt text](image-5.png)
+
+### Question 4
+
+> Quelles méthodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.`
+
+Après avoir commit la suppression SQL, j'appelle la fonction `delete_order_from_redis` qui est implémenté en utilisant la méthode `delete` de Redis pour supprimer la clé de la commande et tout son contenu :
+
+_write_order.py_\
+![alt text](image-7.png)
+
+### Question 5
+
+> Si nous souhaitions créer un rapport similaire, mais présentant les produits les plus vendus, les informations dont nous disposons actuellement dans Redis sont-elles suffisantes, ou devrions-nous chercher dans les tables sur MySQL ? Si nécessaire, quelles informations devrions-nous ajouter à Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
 ## Observations additionnelles
 

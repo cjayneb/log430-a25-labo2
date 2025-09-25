@@ -4,9 +4,11 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
+import json
 from sqlalchemy import Column, Integer, Float
 from sqlalchemy.orm import relationship
 from models.base import Base
+from models.order_item import OrderItem
 
 class Order(Base):
     __tablename__ = 'orders'
@@ -24,5 +26,9 @@ class Order(Base):
         obj.id = int(data["id"])
         obj.user_id = int(data["user_id"])
         obj.total_amount = float(data["total_amount"])
-        obj.order_items = eval(data["items"])
+        raw_items = json.loads(data["items"])
+        obj.order_items = [
+            OrderItem(product_id=int(item["product_id"]), quantity=int(item["quantity"]))
+            for item in raw_items
+        ]
         return obj
