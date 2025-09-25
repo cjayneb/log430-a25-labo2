@@ -53,7 +53,7 @@ jobs:
 
       - name: Creer fichier .env
         run: |
-          echo "DB_HOST=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=3306" >> .env
           echo "DB_NAME=labo02_db" >> .env
           echo "DB_USER=labo02" >> .env
