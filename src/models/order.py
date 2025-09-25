@@ -17,3 +17,12 @@ class Order(Base):
     
     # Relationship to order items
     order_items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+
+    @classmethod
+    def from_redis(cls, data: dict):
+        obj = cls()
+        obj.id = int(data["id"])
+        obj.user_id = int(data["user_id"])
+        obj.total_amount = float(data["total_amount"])
+        obj.order_items = eval(data["items"])
+        return obj
