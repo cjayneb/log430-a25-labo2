@@ -63,6 +63,9 @@ jobs:
           echo "REDIS_DB=0" >> .env
           cat .env
 
+      - name: Run init.sql
+        run: mysql -h 127.0.0.1 -P 3306 -ulabo02 -plabo02 mydb < ./db-init/init.sql
+
       - name: Run tests
         working-directory: ./src
         run: python -m pytest
