@@ -65,7 +65,43 @@ _write_order.py_\
 
 > Si nous souhaitions créer un rapport similaire, mais présentant les produits les plus vendus, les informations dont nous disposons actuellement dans Redis sont-elles suffisantes, ou devrions-nous chercher dans les tables sur MySQL ? Si nécessaire, quelles informations devrions-nous ajouter à Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
+Pour créer un rapport présentant les produits les plus vendus, nous aurions besoin de récupérer le nom du produit de la base de données MySQL, car les données par rapport aux produits sont sauvegardé dans Redis, mais seulement le ID de chaque produit :
+
+_write_order.py_\
+![alt text](image-3.png)
+![alt text](image-6.png)
+
+Dans mon cas, la fonction `get_orders_from_redis` de `read_order.py` avec quelques manipulations de liste et des requête vers MySQL pour obtenir le nom de chaque produit me serait suffisant pour générer ce rapport :
+
+_read_order.py_\
+![alt text](image-10.png)
+
+_report_view.py_\
+![alt text](image-11.png)
+
+Cependant, j'ai aussi implémenté le code pour générer ce rapport en utilisant, au préalable, la méthode `incr` pour garder une trace au fur et à mesure que les commandes se font. Cette façon de faire, ajoute une requête à MySQL lors de l'ajout d'une commande, mais permet une génération de rapport plus rapide :
+
+_write_order.py_\
+![alt text](image-12.png)
+
+_write_product.py_\
+![alt text](image-15.png)
+
+_read_product.py_\
+![alt text](image-16.png)
+
 ## Observations additionnelles
 
-- Observations sur d’éventuels problèmes de setup ou de code rencontrés lors de l’exécution des activités (optionel).
-- Particularités de votre configuration CI/CD (ex. : utilisation d’une VM, d’un service infonuagique comme Azure, etc.).
+**Configuration CI/CD**
+
+Le workflow de GitHub Actions s'exécute sur un self hosted runner qui se trouve sur la machine virtuelle de l'école.
+
+La pipeline de CI met en place les services MySQL et Redis, installe les dépendances, et exécute les tests python.
+
+Ensuite, l'application est déployée à l'aide de `docker compose` et elle est accessible via l'adresse IP de ma machine virtuelle (10.) au port 5000
+
+> **Note** : Le VPN Cisco Secure Client doit être activé et connecté à accesvpn.etsmtl.ca pour accéder à l'application déployé
+
+**Problèmes rencontrés**
+
+- Les fonctions Redis n'était pas facile à trouver et c'était difficile de comprendre ce que chacune des fonction Redis font.

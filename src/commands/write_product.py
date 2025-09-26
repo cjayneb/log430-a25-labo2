@@ -6,7 +6,8 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 
 from sqlalchemy import desc
 from models.product import Product
-from db import get_sqlalchemy_session
+from db import get_redis_conn, get_sqlalchemy_session
+from queries.read_product import get_product_by_id
 
 def add_product(name: str, sku: str, price: float):
     """Insert product with items in MySQL"""
@@ -27,6 +28,11 @@ def add_product(name: str, sku: str, price: float):
     finally:
         session.close()
 
+def add_product_sales_to_redis(sale_items: list):
+    r = get_redis_conn()
+    for item in sale_items:
+        product_id = item['product_id']
+        r.incr(f"product:{product_id}-{get_product_by_id(product_id)['name']}:sales", item['quantity'])
 
 def delete_product_by_id(product_id: int):
     """Delete product by ID in MySQL"""

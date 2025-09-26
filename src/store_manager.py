@@ -11,7 +11,7 @@ from views.template_view import show_main_menu, show_404_page
 from views.user_view import show_user_form, register_user, remove_user
 from views.product_view import show_product_form, register_product, remove_product
 from views.order_view import show_order_form, register_order, remove_order
-from views.report_view import show_highest_spending_users, show_best_sellers
+from views.report_view import show_highest_spending_users, show_best_sellers_v1, show_best_sellers_v2
 
 class StoreManager(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -38,7 +38,7 @@ class StoreManager(BaseHTTPRequestHandler):
         elif self.path == "/orders/reports/highest_spenders":
             self._send_html(show_highest_spending_users())
         elif self.path == "/orders/reports/best_sellers":
-            self._send_html(show_best_sellers())
+            self._send_html(show_best_sellers_v2())
         elif "/assets" in self.path: # load assets such as images, CSS, etc.
             self.load_asset()      
         else:

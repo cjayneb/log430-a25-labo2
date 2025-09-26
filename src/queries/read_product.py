@@ -5,7 +5,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 from sqlalchemy import desc
-from db import get_sqlalchemy_session
+from db import get_redis_conn, get_sqlalchemy_session
 from models.product import Product
 
 def get_product_by_id(product_id):
@@ -27,3 +27,18 @@ def get_products(limit=9999):
     """Get last X products"""
     session = get_sqlalchemy_session()
     return session.query(Product).order_by(desc(Product.id)).limit(limit).all()
+
+def get_products_sales_from_redis():
+    """Get last x products decided by the limit parameter"""
+    r = get_redis_conn()
+    sales_data = {}
+    for key in r.scan_iter(match="product:*:sales"):
+        product = key.split(":")[1]
+        sales_data[product] = int(r.get(key))
+    return sales_data
+
+def get_best_selling_products_v2():
+    """Get report of best selling products"""
+    products = get_products_sales_from_redis()
+    print(products)
+    return sorted(products.items(), key=lambda item: item[1], reverse=True)
