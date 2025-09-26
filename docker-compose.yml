@@ -7,7 +7,7 @@ services:
       - "5000:5000"
     environment:
       DB_HOST: mysql
-      DB_PORT: 3307
+      DB_PORT: 3306
       DB_USER: labo02
       DB_PASSWORD: labo02
       DB_NAME: labo02_db
