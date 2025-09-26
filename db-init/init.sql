@@ -4,7 +4,7 @@ USE labo02_db;
 
 CREATE USER IF NOT EXISTS 'labo02'@'%' IDENTIFIED BY 'labo02';
 GRANT ALL PRIVILEGES ON labo02_db.* TO 'labo02'@'%';
-FLUSH PRIVILEGES;
+ALTER USER 'labo02'@'%' REQUIRE NONE;
 
 -- Users table
 DROP TABLE IF EXISTS users;
