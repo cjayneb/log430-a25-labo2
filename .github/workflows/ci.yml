@@ -75,6 +75,10 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Fix permissions before checkout
+        run: |
+          sudo rm -rf "$GITHUB_WORKSPACE"
+
       - name: Checkout code
         uses: actions/checkout@v4
 
