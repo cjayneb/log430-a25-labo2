@@ -71,10 +71,13 @@ jobs:
         run: python -m pytest
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Deploy app
         run: |
           docker compose down -v || true
