@@ -9,7 +9,7 @@ import time
 import mysql.connector
 import redis
 import config
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 def get_mysql_conn():
@@ -36,7 +36,7 @@ def get_sqlalchemy_session():
         try:
             session = Session()
             # Try a dummy query to force actual connection
-            session.execute("SELECT 1")
+            session.execute(text("SELECT 1"))
             print("Connected to MySQL")
             return session
         except OperationalError as e:
