@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test-and-deploy:
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -73,8 +73,26 @@ jobs:
       - name: Remove .env file
         run: rm .env
 
-      - name: Build Docker image
-        run: docker build -t store-manager-app .
+      - name: Deploy app
+        run: |
+          docker compose down -v || true
+          docker compose build
+          docker compose up -d
 
-      - name: Run Docker container
-        run: docker run -d --name store-manager-app -p 5000:5000 store-manager-app
+  deploy:
+    runs-on: self-hosted
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Fix permissions before checkout
+        run: |
+          sudo rm -rf "$GITHUB_WORKSPACE"/*
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy app
+        run: |
+          docker compose down -v || true
+          docker compose build
+          docker compose up -d
