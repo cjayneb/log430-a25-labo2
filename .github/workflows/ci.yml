@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Fix permissions before checkout
         run: |
-          sudo rm -rf "$GITHUB_WORKSPACE"
+          sudo rm -rf "$GITHUB_WORKSPACE"/*
 
       - name: Checkout code
         uses: actions/checkout@v4
