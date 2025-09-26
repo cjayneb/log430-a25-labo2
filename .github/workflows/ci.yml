@@ -70,6 +70,9 @@ jobs:
         working-directory: ./src
         run: python -m pytest
 
+      - name: Remove .env file
+        run: rm .env
+
   deploy:
     runs-on: self-hosted
     needs: test
