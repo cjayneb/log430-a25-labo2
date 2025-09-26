@@ -73,12 +73,6 @@ jobs:
       - name: Remove .env file
         run: rm .env
 
-      - name: Deploy app
-        run: |
-          docker compose down -v || true
-          docker compose build
-          docker compose up -d
-
   deploy:
     runs-on: self-hosted
     needs: test
