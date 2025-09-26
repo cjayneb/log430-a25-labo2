@@ -4,6 +4,8 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
+from sqlite3 import OperationalError
+import time
 import mysql.connector
 import redis
 import config
@@ -30,4 +32,15 @@ def get_sqlalchemy_session():
     connection_string = f'mysql+mysqlconnector://{config.DB_USER}:{config.DB_PASS}@{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}'
     engine = create_engine(connection_string)
     Session = sessionmaker(bind=engine)
-    return Session()
+    for attempt in range(1, 10):
+        try:
+            session = Session()
+            # Try a dummy query to force actual connection
+            session.execute("SELECT 1")
+            print("Connected to MySQL")
+            return session
+        except OperationalError as e:
+            print(f"MySQL not ready (attempt {attempt}/10): {e}")
+            time.sleep(5)
+
+    raise RuntimeError("Could not connect to MySQL after retries")
