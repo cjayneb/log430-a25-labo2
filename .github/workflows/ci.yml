@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     services:
@@ -72,18 +72,6 @@ jobs:
 
       - name: Remove .env file
         run: rm .env
-
-  deploy:
-    runs-on: self-hosted
-    needs: test
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    steps:
-      - name: Fix permissions before checkout
-        run: |
-          sudo rm -rf "$GITHUB_WORKSPACE"/*
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
       - name: Deploy app
         run: |
